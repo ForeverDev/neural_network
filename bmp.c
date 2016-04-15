@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "bmp.h"
 
-BmpData* Bitmap_getColorData(const sint8* filename) {
+BmpData* Bitmap_getColorData(const char* filename) {
 	FILE* file_handle = NULL;
 	BmpFileHeader file_header;
 	BmpData* data_header = (BmpData *)malloc(sizeof(BmpData));

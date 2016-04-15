@@ -17,6 +17,7 @@ struct Neuron {
 struct NeuronList {
 	Neuron* head;
 	Neuron* tail;
+	float64 bias;
 	NeuronList* next;
 };
 
@@ -36,6 +37,7 @@ struct Brain {
 Brain*		Brain_new(uint32, uint32, uint32, uint32);
 float64*	Brain_getOutput(Brain*);
 void		Brain_feedForward(Brain*, const float64*);
+void		Brain_presentTrainingData(Brain*, const float64*, float64);
 void		Brain_print(Brain*);
 
 #endif

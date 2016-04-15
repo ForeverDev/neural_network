@@ -31,6 +31,6 @@ struct BmpData {
 	uint8* image_data;		/* allocated by Bitmap_getColorData */
 };
 
-BmpData* Bitmap_getColorData(const sint8*);
+BmpData* Bitmap_getColorData(const char*);
 
 #endif

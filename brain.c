@@ -99,6 +99,17 @@ Brain_feedForward(Brain* B, const float64* data) {
 	}
 }
 
+
+// evolutionary method of training
+void
+Brain_presentTrainingData(Brain* B, const float64* data, float64 expected) {
+	Brain* trainers = (Brain *)calloc(16, sizeof(Brain));		
+	for (int i = 0; i < 16; i++) {
+		memcpy(trainers[i], B, sizeof(Brain));	
+	}
+	free(trainers);
+}
+
 void
 Brain_print(Brain* B) {
 	if (!B->neurons->head) return;
