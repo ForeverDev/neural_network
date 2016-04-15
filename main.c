@@ -5,27 +5,22 @@
 
 int main(int argc, char** argv) {
 	
-	/*
-	const double data[] = {
-		0, 0.2, 0, 0, 0.3
-	};
-
+	BmpData* bmp;
+	Brain* brain;
 	double* result;
+	double* fractional_RGB;
 
-	Brain* brain = Brain_new(3, 4, 2, 4);
+	bmp = Bitmap_getColorData("TRU.BMP");
+	fractional_RGB = (double *)malloc(bmp->width * bmp->height * sizeof(double));
 
-	Brain_feedForward(brain, data);
-	result = Brain_getOutput(brain);
-
-	Brain_print(brain);
-	printf("%f\n", result[0]);
-	*/
-
-	const BmpData* bmp = Bitmap_getColorData("TRU.BMP");
-
-	for (int i = 0; i < bmp->raw_size; i += 3) {
-		printf("%03d %03d %03d\n", bmp->image_data[i], bmp->image_data[i + 1], bmp->image_data[i + 2]);
+	for (int i = 0; i < bmp->width * bmp->height; i++) {
+		fractional_RGB[i] = ((double)bmp->image_data[i]) / 255.0;
 	}
+
+	brain = Brain_new(bmp->width * bmp->height, 1, 3, 5);
+
+	Brain_feedForward(brain, fractional_RGB);
+	Brain_print(brain);
 
 	return 0;
 

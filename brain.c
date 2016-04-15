@@ -56,7 +56,7 @@ Brain_new(uint32 inputs, uint32 outputs, uint32 hiddens, uint32 nperh) {
 				int last_neurons = (i == 1) ? inputs : nperh;
 				neuron->axons = (float64 *)malloc(last_neurons * sizeof(float64));
 				for (int k = 0; k < last_neurons; k++) {
-					neuron->axons[k] = ((float64)(rand() % 100 - 50)) / 50.0;
+					neuron->axons[k] = ((float64)(rand() % 1000 - 500)) / 500.0;
 				}
 			}
 		}
@@ -92,8 +92,8 @@ Brain_feedForward(Brain* B, const float64* data) {
 			for (Neuron* k = last->head; k; k = k->next, index++) {
 				sum += k->charge * j->axons[index];
 			}
-			sum = 1 / (1 + exp(-sum * 3));
-			j->charge = sum > 0.3 ? sum : 0;
+			j->charge = 1 / (1 + exp(-sum));
+			//j->charge = sum > 0.3 ? sum : 0;
 		}
 		last = i;
 	}
