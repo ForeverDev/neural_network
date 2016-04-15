@@ -7,7 +7,7 @@
 static int randomized = 0;
 
 Brain* 
-Brain_new(uint32 inputs, uint32 outputs, uint32 hidden, uint32 nperh) {
+Brain_new(uint32 inputs, uint32 outputs, uint32 hiddens, uint32 nperh) {
 	if (!randomized) {
 		srand(time(NULL));
 		randomized = 1;
@@ -16,8 +16,12 @@ Brain_new(uint32 inputs, uint32 outputs, uint32 hidden, uint32 nperh) {
 	B->neurons = (NeuronListList *)malloc(sizeof(NeuronListList));
 	B->neurons->head = NULL;
 	B->neurons->tail = NULL;
+	B->inputs = inputs;
+	B->outputs = outputs;
+	B->hiddens = hiddens;
+	B->nperh = nperh;
 	NeuronList* last_col = NULL;
-	for (int i = 0; i < hidden + 2; i++) {
+	for (int i = 0; i < hiddens + 2; i++) {
 
 		int num_neurons;
 		NeuronList* col = (NeuronList *)malloc(sizeof(NeuronList));
@@ -30,12 +34,12 @@ Brain_new(uint32 inputs, uint32 outputs, uint32 hidden, uint32 nperh) {
 		}
 		B->neurons->tail = col;
 
-		num_neurons = (i == 0) ? (i == hidden + 1) ? inputs : outputs : nperh;
+		num_neurons = (i == 0) ? inputs : (i == hiddens + 1) ? outputs : nperh; 
 
 		Neuron* last_neuron = NULL;
 		for (int j = 0; j < num_neurons; j++) {
 			Neuron* neuron = (Neuron *)malloc(sizeof(Neuron));	
-			neuron->charge = 0;
+			neuron->charge = 0.0;
 			neuron->next = NULL;
 
 			if (last_neuron) {
@@ -50,9 +54,9 @@ Brain_new(uint32 inputs, uint32 outputs, uint32 hidden, uint32 nperh) {
 
 			if (i > 0) {
 				int last_neurons = (i == 1) ? inputs : nperh;
-				neuron->axons = (float64 *)malloc(sizeof(float64) * last_neurons);
+				neuron->axons = (float64 *)malloc(last_neurons * sizeof(float64));
 				for (int k = 0; k < last_neurons; k++) {
-					neuron->axons[k] = ((float64)(rand() % 100 - 50))/50;
+					neuron->axons[k] = ((float64)(rand() % 100 - 50)) / 50.0;
 				}
 			}
 		}
@@ -64,6 +68,15 @@ Brain_new(uint32 inputs, uint32 outputs, uint32 hidden, uint32 nperh) {
 
 	}
 	return B;
+}
+
+float64* Brain_getOutput(Brain* B) {
+	float64* output = (float64 *)malloc(B->outputs * sizeof(float64));
+	float64* ptr = output;
+	for (Neuron* i = B->neurons->tail->head; i; i = i->next) {
+		*ptr++ = i->charge;
+	}
+	return output;
 }
 
 void
@@ -79,7 +92,7 @@ Brain_feedForward(Brain* B, const float64* data) {
 			for (Neuron* k = last->head; k; k = k->next, index++) {
 				sum += k->charge * j->axons[index];
 			}
-			sum = 1 / (1 + exp(-sum));
+			sum = 1 / (1 + exp(-sum * 3));
 			j->charge = sum > 0.3 ? sum : 0;
 		}
 		last = i;

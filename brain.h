@@ -1,16 +1,7 @@
 #ifndef BRAIN_H
 #define BRAIN_H
 
-typedef char				int8;
-typedef short				int16;
-typedef int					int32;
-typedef long long			int64;
-typedef unsigned char		uint8;
-typedef unsigned short		uint16;
-typedef unsigned int		uint32;
-typedef unsigned long long	uint64;
-typedef float				float32;
-typedef double				float64;
+#include "types.h"
 
 typedef struct Neuron Neuron;
 typedef struct NeuronList NeuronList;
@@ -36,10 +27,15 @@ struct NeuronListList {
 
 struct Brain {
 	NeuronListList* neurons;
+	uint32 inputs;
+	uint32 outputs;
+	uint32 hiddens;
+	uint32 nperh;
 };
 
-Brain*	Brain_new(uint32, uint32, uint32, uint32);
-void	Brain_feedForward(Brain*, const float64*);
-void	Brain_print(Brain*);
+Brain*		Brain_new(uint32, uint32, uint32, uint32);
+float64*	Brain_getOutput(Brain*);
+void		Brain_feedForward(Brain*, const float64*);
+void		Brain_print(Brain*);
 
 #endif
