@@ -30,13 +30,7 @@ Brain_new(uint32 inputs, uint32 outputs, uint32 hidden, uint32 nperh) {
 		}
 		B->neurons->tail = col;
 
-		if (i == 0) {
-			num_neurons = inputs;
-		} else if (i == hidden + 1) {
-			num_neurons = outputs;
-		} else {
-			num_neurons = nperh;
-		}
+		num_neurons = (i == 0) ? (i == hidden + 1) ? inputs : outputs : nperh;
 
 		Neuron* last_neuron = NULL;
 		for (int j = 0; j < num_neurons; j++) {
