@@ -1,8 +1,17 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <time.h>
 #include "brain.h"
+
+static int randomized = 0;
 
 Brain* 
 Brain_new(uint32 inputs, uint32 outputs, uint32 hidden, uint32 nperh) {
+	if (!randomized) {
+		srand(time(NULL));
+		randomized = 1;
+	}
 	Brain* B = (Brain *)malloc(sizeof(Brain));	
 	B->neurons = (NeuronListList *)malloc(sizeof(NeuronListList));
 	B->neurons->head = NULL;
@@ -44,6 +53,14 @@ Brain_new(uint32 inputs, uint32 outputs, uint32 hidden, uint32 nperh) {
 				col->head = neuron;
 			}
 			col->tail = neuron;
+
+			if (i > 0) {
+				int last_neurons = (i == 1) ? inputs : nperh;
+				neuron->axons = (float64 *)malloc(sizeof(float64) * last_neurons);
+				for (int k = 0; k < last_neurons; k++) {
+					neuron->axons[k] = ((float64)(rand() % 100 - 50))/50;
+				}
+			}
 		}
 
 		if (last_col) {
@@ -56,7 +73,32 @@ Brain_new(uint32 inputs, uint32 outputs, uint32 hidden, uint32 nperh) {
 }
 
 void
+Brain_feedForward(Brain* B, const float64* data) {
+	for (Neuron* i = B->neurons->head->head; i; i = i->next) {
+		i->charge = *data++;
+	}
+	NeuronList* last = B->neurons->head;
+	for (NeuronList* i = B->neurons->head->next; i; i = i->next) {
+		for (Neuron* j = i->head; j; j = j->next) {
+			float64 sum = 0;
+			int index = 0;
+			for (Neuron* k = last->head; k; k = k->next, index++) {
+				sum += k->charge * j->axons[index];
+			}
+			sum = 1 / (1 + exp(-sum));
+			j->charge = sum > 0.3 ? sum : 0;
+		}
+		last = i;
+	}
+}
+
+void
 Brain_print(Brain* B) {
 	if (!B->neurons->head) return;
-	for (NeuronList* i = B->neurons->head; i 
+	for (NeuronList* i = B->neurons->head; i; i = i->next) {
+		for (Neuron* j = i->head; j; j = j->next) {
+			printf("%f ", j->charge);
+		}
+		printf("\n");
+	}
 }

@@ -20,6 +20,7 @@ typedef struct Brain Brain;
 struct Neuron {
 	float64 charge;
 	Neuron* next;
+	float64* axons; // incoming axons
 };
 
 struct NeuronList {
@@ -38,6 +39,7 @@ struct Brain {
 };
 
 Brain*	Brain_new(uint32, uint32, uint32, uint32);
+void	Brain_feedForward(Brain*, const float64*);
 void	Brain_print(Brain*);
 
 #endif

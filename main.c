@@ -4,7 +4,12 @@
 
 int main(int argc, char** argv) {
 
-	Brain* brain = Brain_new(3, 4, 2, 4);
+	const double data[] = {
+		0, 0.2, 0, 0, 0.3
+	};
+
+	Brain* brain = Brain_new(5, 4, 2, 4);
+	Brain_feedForward(brain, data);
 	Brain_print(brain);
 	
 	return 0;
